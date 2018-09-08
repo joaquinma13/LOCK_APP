@@ -68,7 +68,7 @@ public class MyService extends Service {
                 try {
                     publishProgress();
                     // Stop 5s
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -110,8 +110,8 @@ public class MyService extends Service {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
                         //System.out.println("Salida: "+ topPackageName);
 
-                        if(topPackageName.equals("com.sec.android.app.launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app") ||
-                        topPackageName.equals("com.android.systemui"))
+                        if(topPackageName.equals("com.miui.home") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
+                                || topPackageName.equals("com.android.vending")  )
                         {
                             Log.e("Permission ", "TE DOY CHANCE WE");
                         }

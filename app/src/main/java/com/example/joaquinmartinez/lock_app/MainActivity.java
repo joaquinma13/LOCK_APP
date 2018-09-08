@@ -22,19 +22,32 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     ImageView config;
-
+    int mode;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         config = findViewById(R.id.Config);
-
-
         LockFragment lockFragment = new LockFragment();
         final ConfigFragment configFragment = new ConfigFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.content_frame,lockFragment).commit();
 
+        try {
+            PackageManager packageManager = this.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) this.getSystemService(Context.APP_OPS_SERVICE);
+            mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+        }catch (PackageManager.NameNotFoundException e) {}
+        System.out.println("valor mode: "+ mode);
+
+        if (mode != 0){
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            startActivity(intent);
+            Toast.makeText(this, "Se necesitan Permisos!!!", Toast.LENGTH_SHORT).show();
+        }
+        else if(mode == 0 ){
+            getSupportFragmentManager().beginTransaction().add(R.id.content_frame,lockFragment).commit();
+        }
         config.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

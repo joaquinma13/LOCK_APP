@@ -108,9 +108,9 @@ public class MyService extends Service {
                     }
                     if (mySortedMap != null && !mySortedMap.isEmpty()) {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                        //System.out.println("Salida: "+ topPackageName);
+                        System.out.println("Salida: "+ topPackageName);
 
-                        if(topPackageName.equals("com.miui.home") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
+                        if(topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
                                 || topPackageName.equals("com.android.vending")  )
                         {
                             Log.e("Permission ", "TE DOY CHANCE WE");
@@ -138,7 +138,7 @@ public class MyService extends Service {
 
 //http://codeworld55.blogspot.com/2015/10/how-to-create-android-app-lock.html#comment-form
 
-
+//com.lenovo.xlauncher
 //com.android.vending -> store
 //com.android.settings -> configuracion
 //com.miui.home -> inicio lanzador

@@ -47,8 +47,6 @@ public class MyService extends Service {
         myTask.cancel(true);
     }
 
-
-
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
@@ -110,7 +108,7 @@ public class MyService extends Service {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
                         System.out.println("Salida: "+ topPackageName);
 
-                        if(topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
+                        if(topPackageName.contains("home") ||topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
                                 || topPackageName.equals("com.android.vending")  )
                         {
                             Log.e("Permission ", "TE DOY CHANCE WE");

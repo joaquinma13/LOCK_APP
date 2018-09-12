@@ -4,6 +4,7 @@ package com.example.joaquinmartinez.lock_app;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -24,8 +25,7 @@ import android.widget.Toast;
  * A simple {@link Fragment} subclass.
  */
 public class LockFragment extends Fragment {
-    TextView textView;
-    int mode;
+    ImageView Master;
 
 
     public LockFragment() {
@@ -45,14 +45,8 @@ public class LockFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        textView = getActivity().findViewById(R.id.text);
-        textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getActivity().stopService(new Intent(getContext(), MyService.class));
-                }
-        });
-        textView.setOnLongClickListener(new View.OnLongClickListener() {
+        Master = getActivity().findViewById(R.id.Master);
+        Master.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 getActivity().startService(new Intent(getContext(), MyService.class));

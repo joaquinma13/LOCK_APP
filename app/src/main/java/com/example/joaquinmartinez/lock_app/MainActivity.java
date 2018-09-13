@@ -1,13 +1,18 @@
 package com.example.joaquinmartinez.lock_app;
 
 
+import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +26,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.SortedMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
+
+import static android.app.usage.UsageStatsManager.INTERVAL_DAILY;
 
 public class MainActivity extends AppCompatActivity implements NotificationHandler.NoticeDialogListener{
     ImageView config;
@@ -31,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
     String Passsword;
     ConfigFragment configFragment;
     LockFragment lockFragment;
+    private static Timer timer = new Timer();
     boolean flag;
 
     private  NotificationHandler notificationHandler;
@@ -46,24 +58,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         configFragment = new ConfigFragment();
 
 
-        /*
-        String deviceName = android.os.Build.MODEL;
-        String deviceMan = android.os.Build.MANUFACTURER;
-        System.out.println("FABRICANTE: "+ deviceMan + "MODELO: "+ deviceName);
-        */
-
-
-
-        List<PackageInfo> packList = getPackageManager().getInstalledPackages(0);
-        for (int i=0; i < packList.size(); i++)
-        {
-            PackageInfo packInfo = packList.get(i);
-            if (  (packInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
-            {
-                String appName = packInfo.applicationInfo.loadLabel(getPackageManager()).toString();
-                Log.e("APP № " + Integer.toString(i), appName);
-            }
-        }
+        startService();
 
         try {
             PackageManager packageManager = this.getPackageManager();
@@ -71,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             AppOpsManager appOpsManager = (AppOpsManager) this.getSystemService(Context.APP_OPS_SERVICE);
             mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
         }catch (PackageManager.NameNotFoundException e) {}
-        System.out.println("valor mode: "+ mode);
 
         if (mode != 0){
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
@@ -108,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
                 back.setVisibility(View.GONE);
             }
         });
-        //com.hancom.androidpc.launcher.shared
     }
 
 
@@ -118,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         DialogFragment dialog = new NotificationHandler();
         dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
     }
+
 
 
     @Override
@@ -135,8 +129,9 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             else
                 Toast.makeText(getApplication(), "Acceso Denegado!!!", Toast.LENGTH_SHORT).show();
         }else{
-            if (Username.equals("MCollet") && Passsword.equals("12345") )
-                stopService(new Intent(getApplication(), MyService.class));
+            if (Username.equals("MCollet") && Passsword.equals("12345") ){
+                timer.cancel();
+            }
             else
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
         }
@@ -147,4 +142,58 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
     {
         return (keyCode == KeyEvent.KEYCODE_BACK ? true : super.onKeyDown(keyCode, event));
     }
+
+    private void startService()
+    {
+        timer.scheduleAtFixedRate(new mainTask(), 0, 300);
+    }
+
+    private class mainTask extends TimerTask
+    {
+        public void run()
+        {
+            toastHandler.sendEmptyMessage(0);
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    final Handler toastHandler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            String topPackageName;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+                long time = System.currentTimeMillis();
+                List<UsageStats> stats = mUsageStatsManager.queryUsageStats(INTERVAL_DAILY, time - 1000 * 10, time);
+                if (stats != null) {
+                    SortedMap< Long, UsageStats > mySortedMap = new TreeMap< Long, UsageStats >();
+                    for (UsageStats usageStats: stats) {
+                        mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                    }
+                    if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                        topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+                        //System.out.println("Salida: "+ topPackageName);
+
+                        if(topPackageName.contains("home") ||topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
+                                || topPackageName.equals("com.android.vending") )
+                        {
+                        }
+                        else{
+                            Intent i = new Intent(getApplication(), MainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(i);
+                        }
+
+
+                    }
+                }
+            }
+            else{
+                //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...
+            }
+        }
+    };
 }

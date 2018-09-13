@@ -37,13 +37,15 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
     ImageView config;
     ImageView out;
     ImageView back;
+    ImageView enter;
     int mode;
     String Username;
     String Passsword;
     ConfigFragment configFragment;
     LockFragment lockFragment;
     private static Timer timer = new Timer();
-    boolean flag;
+    int flag;
+    mainTask task = new mainTask();
 
     private  NotificationHandler notificationHandler;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         config = findViewById(R.id.Config);
         out = findViewById(R.id.Out);
         back = findViewById(R.id.Back);
+        enter = findViewById(R.id.Enter);
         lockFragment = new LockFragment();
         configFragment = new ConfigFragment();
 
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             @Override
             public void onClick(View view) {
                 showNoticeDialog();
-                flag = true;
+                flag = 1;
             }
         });
 
@@ -88,7 +91,17 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             @Override
             public void onClick(View view) {
                 showNoticeDialog();
-                flag = false;
+                flag = 2;
+
+            }
+        });
+
+        enter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNoticeDialog();
+                flag = 3;
+
             }
         });
 
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
     public void applyText(String username, String password) {
         Username = username;
         Passsword = password;
-        if (flag){
+        if (flag == 1){
             if (Username.equals("MCollet") && Passsword.equals("12345") ){
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame,configFragment);
@@ -128,9 +141,22 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             }
             else
                 Toast.makeText(getApplication(), "Acceso Denegado!!!", Toast.LENGTH_SHORT).show();
-        }else{
+        }else if (flag == 2){
             if (Username.equals("MCollet") && Passsword.equals("12345") ){
                 timer.cancel();
+                Toast.makeText(getApplication(), "Servicio Detenido!!!", Toast.LENGTH_SHORT).show();
+                out.setVisibility(View.GONE);
+                enter.setVisibility(View.VISIBLE);
+            }
+            else
+                Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
+        }else if(flag == 3){
+            if (Username.equals("MCollet") && Passsword.equals("12345") ){
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(0 );
+                Toast.makeText(getApplication(), "Servicio Iniciado!!!", Toast.LENGTH_SHORT).show();
+                out.setVisibility(View.VISIBLE);
+                enter.setVisibility(View.GONE);
             }
             else
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
@@ -145,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
 
     private void startService()
     {
-        timer.scheduleAtFixedRate(new mainTask(), 0, 300);
+        timer.scheduleAtFixedRate(task, 0, 300);
     }
 
     private class mainTask extends TimerTask

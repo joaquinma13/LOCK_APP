@@ -20,14 +20,15 @@ import android.widget.Toast;
 
 public class Home extends AppCompatActivity {
     int mode;
+    private SharePreference preference;
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        preference = SharePreference.getInstance(this);
 
 
         try {
@@ -43,6 +44,9 @@ public class Home extends AppCompatActivity {
             Toast.makeText(this, "Se necesitan Permisos!!!", Toast.LENGTH_SHORT).show();
         }
         else if(mode == 0 ){
+            if (preference.getStrData("List_Lock").equals("")){
+                preference.saveData("List_Lock","Walmart");
+            }
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }

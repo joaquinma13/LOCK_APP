@@ -38,6 +38,12 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".MyService">
+            <intent-filter>
+                <action android:name="com.example.joaquinmartinez.lock_app.MyService"></action>
+            </intent-filter>
+        </service>
+
 
     </application>
 

@@ -8,7 +8,6 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -19,7 +18,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,10 +28,11 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import static android.app.usage.UsageStatsManager.INTERVAL_DAILY;
 
-public class MainActivity extends AppCompatActivity implements NotificationHandler.NoticeDialogListener{
+public class MainActivity extends AppCompatActivity implements NotificationPassword.NoticeDialogListener{
     ImageView config;
     ImageView out;
     ImageView back;
@@ -45,9 +44,10 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
     LockFragment lockFragment;
     private static Timer timer = new Timer();
     int flag;
-    mainTask task = new mainTask();
+    private SharePreference preference;
+    String[] apps = new String[0];
 
-    private  NotificationHandler notificationHandler;
+    private NotificationPassword notificationHandler;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         enter = findViewById(R.id.Enter);
         lockFragment = new LockFragment();
         configFragment = new ConfigFragment();
-
-
-        startService();
+        preference = SharePreference.getInstance(this);
+        apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
+        startService(new Intent(this, MyService.class));
 
         try {
             PackageManager packageManager = this.getPackageManager();
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
 
     public void showNoticeDialog() {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new NotificationHandler();
+        DialogFragment dialog = new NotificationPassword();
         dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
     }
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         Username = username;
         Passsword = password;
         if (flag == 1){
-            if (Username.equals("MCollet") && Passsword.equals("12345") ){
+            if (Username.equals("MC Collect") && Passsword.equals("12345") ){
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame,configFragment);
                 ft.commit();
@@ -142,8 +142,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             else
                 Toast.makeText(getApplication(), "Acceso Denegado!!!", Toast.LENGTH_SHORT).show();
         }else if (flag == 2){
-            if (Username.equals("MCollet") && Passsword.equals("12345") ){
-                timer.cancel();
+            if (Username.equals("MC Collect") && Passsword.equals("12345") ){
                 Toast.makeText(getApplication(), "Servicio Detenido!!!", Toast.LENGTH_SHORT).show();
                 out.setVisibility(View.GONE);
                 enter.setVisibility(View.VISIBLE);
@@ -151,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
             else
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
         }else if(flag == 3){
-            if (Username.equals("MCollet") && Passsword.equals("12345") ){
+            if (Username.equals("MC Collect") && Passsword.equals("12345") ){
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(0 );
                 Toast.makeText(getApplication(), "Servicio Iniciado!!!", Toast.LENGTH_SHORT).show();
@@ -163,63 +162,4 @@ public class MainActivity extends AppCompatActivity implements NotificationHandl
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        return (keyCode == KeyEvent.KEYCODE_BACK ? true : super.onKeyDown(keyCode, event));
-    }
-
-    private void startService()
-    {
-        timer.scheduleAtFixedRate(task, 0, 300);
-    }
-
-    private class mainTask extends TimerTask
-    {
-        public void run()
-        {
-            toastHandler.sendEmptyMessage(0);
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    final Handler toastHandler = new Handler()
-    {
-        @Override
-        public void handleMessage(Message msg)
-        {
-            String topPackageName;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-                long time = System.currentTimeMillis();
-                List<UsageStats> stats = mUsageStatsManager.queryUsageStats(INTERVAL_DAILY, time - 1000 * 10, time);
-                if (stats != null) {
-                    SortedMap< Long, UsageStats > mySortedMap = new TreeMap< Long, UsageStats >();
-                    for (UsageStats usageStats: stats) {
-                        mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                    }
-                    if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                        topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                        //System.out.println("Salida: "+ topPackageName);
-
-                        if(topPackageName.contains("home") ||topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
-                                || topPackageName.equals("com.android.vending") )
-                        {
-                        }
-                        else{
-                            Intent i = new Intent(getApplication(), MainActivity.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(i);
-                        }
-
-
-                    }
-                }
-            }
-            else{
-                //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...
-            }
-        }
-    };
 }

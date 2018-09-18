@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class NotificationHandler extends AppCompatDialogFragment{
+public class NotificationPassword extends AppCompatDialogFragment{
 
     EditText username;
     EditText password;

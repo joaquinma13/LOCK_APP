@@ -42,9 +42,6 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
     public ConfigFragment() {
     }
 
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_config, container, false);
@@ -64,7 +61,6 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
             public void onClick(View view, int position) {
                 textView = view.findViewById(R.id.NameApp);
                 nom = ((TextView) view.findViewById(R.id.NameApp)).getText().toString();
-                //System.out.println("DATA: "+ nom);
                 NotificationAnswer notificationAnswer = new NotificationAnswer();
                 notificationAnswer.setTargetFragment(ConfigFragment.this,1);
                 notificationAnswer.show(getFragmentManager(),"Hola");
@@ -75,12 +71,7 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
     }
 
     void getApps(){
-
-        //String[] apps = new String[0];
-        //apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
-        //System.out.println("TAMAÑO: "+ apps.length);
         List<PackageInfo> packList = getActivity().getPackageManager().getInstalledPackages(0);
-        //Log.e("TAMAÑO ", String.valueOf(packList.size()));
         for (int i=0; i < packList.size(); i++)
         {
             AdapterApp.App app = new AdapterApp.App();
@@ -92,13 +83,6 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
                 if (!appName.equals("")){
 
                     app.setName(appName);
-                    /*
-                    for (int j = 0; j < apps.length; j++){
-                        if (app.getName().equals(apps[j])){
-                            app.setFlag(true);
-                        }
-                    }
-                    */
                     ListApp.add(app);
                 }
             }

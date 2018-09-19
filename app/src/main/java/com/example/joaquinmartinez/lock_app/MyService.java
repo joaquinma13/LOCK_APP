@@ -19,14 +19,13 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import static android.app.usage.UsageStatsManager.INTERVAL_DAILY;
 
 public class MyService extends Service {
     private static Timer timer = new Timer();
-    public Boolean userAuth = false;
-    private Context ctx;
-    public String pActivity="";
+    private SharePreference preference;
 
     public IBinder onBind(Intent arg0)
     {
@@ -36,8 +35,8 @@ public class MyService extends Service {
     public void onCreate()
     {
         super.onCreate();
-        ctx = this;
         startService();
+        preference = SharePreference.getInstance(getApplicationContext());
     }
 
     private void startService()
@@ -56,7 +55,6 @@ public class MyService extends Service {
     public void onDestroy()
     {
         super.onDestroy();
-        Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
     }
 
     @SuppressLint("HandlerLeak")
@@ -67,29 +65,44 @@ public class MyService extends Service {
         {
             String topPackageName;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
+                if (preference.getBooData("Timer") == false){}
+                else{
+                    int flag = 0;
+                String[] apps = new String[0];
+                apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
                 UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
                 long time = System.currentTimeMillis();
                 List<UsageStats> stats = mUsageStatsManager.queryUsageStats(INTERVAL_DAILY, time - 1000 * 10, time);
                 if (stats != null) {
-                    SortedMap< Long, UsageStats > mySortedMap = new TreeMap< Long, UsageStats >();
-                    for (UsageStats usageStats: stats) {
+                    SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                    for (UsageStats usageStats : stats) {
                         mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
                     }
                     if (mySortedMap != null && !mySortedMap.isEmpty()) {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                        if(topPackageName.contains("home") ||topPackageName.contains("launcher") || topPackageName.equals("com.mc.miga") || topPackageName.equals("com.example.joaquinmartinez.lock_app")
-                                || topPackageName.equals("com.android.vending") )
-                        {
+
+                        for (int j = 0; j < apps.length; j++) {
+                            //System.out.println("APP_B: "+ apps[j].toLowerCase());
+                            if (topPackageName.contains(apps[j].toLowerCase())) {
+                                System.out.println("APP_B: " + apps[j].toLowerCase() + " TOP: " + topPackageName);
+                                flag = 1;
+                                break;
+                            }
                         }
-                        else{
+
+                        if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")) {
+
+                        } else if (flag == 1) {
+                            flag = 0;
+                        } else {
+                            System.out.println("TOP: " + topPackageName);
                             Intent i = new Intent(getApplication(), MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
                         }
-
                     }
                 }
+            }
             }
             else{
                 //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...

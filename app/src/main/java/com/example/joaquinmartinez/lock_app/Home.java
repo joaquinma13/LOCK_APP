@@ -29,6 +29,7 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         preference = SharePreference.getInstance(this);
+        preference.saveData("Timer",true);
 
 
         try {
@@ -45,7 +46,7 @@ public class Home extends AppCompatActivity {
         }
         else if(mode == 0 ){
             if (preference.getStrData("List_Lock").equals("")){
-                preference.saveData("List_Lock","Walmart");
+                preference.saveData("List_Lock","NULL");
             }
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);

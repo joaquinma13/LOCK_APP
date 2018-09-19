@@ -1,36 +1,23 @@
 package com.example.joaquinmartinez.lock_app;
 
 
-import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.util.List;
-import java.util.SortedMap;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
-
-import static android.app.usage.UsageStatsManager.INTERVAL_DAILY;
 
 public class MainActivity extends AppCompatActivity implements NotificationPassword.NoticeDialogListener{
     ImageView config;
@@ -42,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
     String Passsword;
     ConfigFragment configFragment;
     LockFragment lockFragment;
-    private static Timer timer = new Timer();
     int flag;
     private SharePreference preference;
     String[] apps = new String[0];
@@ -76,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
             Toast.makeText(this, "Se necesitan Permisos!!!", Toast.LENGTH_SHORT).show();
         }
         else if(mode == 0 ){
+            PackageManager packageManager = getPackageManager();
             getSupportFragmentManager().beginTransaction().add(R.id.content_frame,lockFragment).commit();
         }
 
@@ -120,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
 
 
     public void showNoticeDialog() {
-        // Create an instance of the dialog fragment and show it
         DialogFragment dialog = new NotificationPassword();
         dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
     }
@@ -144,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
         }else if (flag == 2){
             if (Username.equals("MC Collect") && Passsword.equals("12345") ){
                 Toast.makeText(getApplication(), "Servicio Detenido!!!", Toast.LENGTH_SHORT).show();
+                stopService(new Intent(this, MyService.class));
+                preference.saveData("Timer",false);
                 out.setVisibility(View.GONE);
                 enter.setVisibility(View.VISIBLE);
             }
@@ -151,9 +139,7 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
         }else if(flag == 3){
             if (Username.equals("MC Collect") && Passsword.equals("12345") ){
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(0 );
-                Toast.makeText(getApplication(), "Servicio Iniciado!!!", Toast.LENGTH_SHORT).show();
+                preference.saveData("Timer",true);
                 out.setVisibility(View.VISIBLE);
                 enter.setVisibility(View.GONE);
             }
@@ -161,5 +147,7 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
 }

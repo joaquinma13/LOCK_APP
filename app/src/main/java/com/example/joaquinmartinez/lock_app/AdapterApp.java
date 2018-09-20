@@ -38,39 +38,23 @@ public class AdapterApp extends RecyclerView.Adapter<AdapterApp.ViewHolderData> 
     public void onBindViewHolder(ViewHolderData holder, int position) {
         final String temporal;
         final App item = ListApp.get(position);
-        //System.out.println("NOMBRE: " + item.getName()+ " FLAG: "+ item.isFlag());
+
+        holder.setIsRecyclable(false);
         holder.NameApp.setText(item.getName());
         if (preference.getStrData("List_Lock").contains(item.getName()))
-            holder.NameApp.setTextColor(Color.GREEN);
-        else
-            holder.NameApp.setTextColor(Color.RED);
-
-
-        /*
-
-        if (preference.getStrData("List_Lock").contains(item.getName())){
             holder.SwOnOff.setChecked(true);
-        }
-
-        else if (item.isFlag() == false){
+        else
             holder.SwOnOff.setChecked(false);
-        }
 
 
         holder.SwOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    System.out.println(item.getName());
 
                 }
             }
         });
-        */
-
-
-
-
     }
 
     @Override
@@ -81,12 +65,12 @@ public class AdapterApp extends RecyclerView.Adapter<AdapterApp.ViewHolderData> 
     public class ViewHolderData extends RecyclerView.ViewHolder {
 
         TextView NameApp;
-        ImageView LogoApp;
+        Switch SwOnOff;
 
         public ViewHolderData(View itemView) {
             super(itemView);
             NameApp = (TextView) itemView.findViewById(R.id.NameApp);
-            LogoApp = itemView.findViewById(R.id.LogoApp);
+            SwOnOff = itemView.findViewById(R.id.SwOnOff);
         }
     }
 
@@ -111,6 +95,3 @@ public class AdapterApp extends RecyclerView.Adapter<AdapterApp.ViewHolderData> 
         }
     }
 }
-
-//android.widget.Switch{24af991 VFED..C.. ......ID 596,24-690,78 #7f08000e app:id/SwOnOff}
-//android.widget.Switch{24af991 VFED..C.. ......ID 596,24-690,78 #7f08000e app:id/SwOnOff}

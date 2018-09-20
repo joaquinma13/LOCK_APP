@@ -49,11 +49,16 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
         apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
         startService(new Intent(this, MyService.class));
 
+        PackageManager p = getPackageManager();
+        ComponentName componentName = new ComponentName(MainActivity.this,Home.class ); // launcher activity specified in manifest file as <category android:name="android.intent.category.LAUNCHER" />
+        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
         try {
             PackageManager packageManager = this.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
             AppOpsManager appOpsManager = (AppOpsManager) this.getSystemService(Context.APP_OPS_SERVICE);
             mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+
         }catch (PackageManager.NameNotFoundException e) {}
 
         if (mode != 0){
@@ -134,11 +139,17 @@ public class MainActivity extends AppCompatActivity implements NotificationPassw
                 preference.saveData("Timer",false);
                 out.setVisibility(View.GONE);
                 enter.setVisibility(View.VISIBLE);
+                PackageManager p = getPackageManager();
+                ComponentName componentName = new ComponentName(this, Home.class);
+                p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
             }
             else
                 Toast.makeText(getApplication(), "Petición Denegada!!!", Toast.LENGTH_SHORT).show();
         }else if(flag == 3){
             if (Username.equals("MC Collect") && Passsword.equals("12345") ){
+                PackageManager p = getPackageManager();
+                ComponentName componentName = new ComponentName(MainActivity.this,Home.class ); // launcher activity specified in manifest file as <category android:name="android.intent.category.LAUNCHER" />
+                p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                 preference.saveData("Timer",true);
                 out.setVisibility(View.VISIBLE);
                 enter.setVisibility(View.GONE);

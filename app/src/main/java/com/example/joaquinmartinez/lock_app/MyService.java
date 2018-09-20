@@ -11,8 +11,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -82,7 +80,6 @@ public class MyService extends Service {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
 
                         for (int j = 0; j < apps.length; j++) {
-                            //System.out.println("APP_B: "+ apps[j].toLowerCase());
                             if (topPackageName.contains(apps[j].toLowerCase())) {
                                 System.out.println("APP_B: " + apps[j].toLowerCase() + " TOP: " + topPackageName);
                                 flag = 1;
@@ -90,7 +87,7 @@ public class MyService extends Service {
                             }
                         }
 
-                        if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")) {
+                        if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")|| topPackageName.equals("com.android.vending")) {
 
                         } else if (flag == 1) {
                             flag = 0;

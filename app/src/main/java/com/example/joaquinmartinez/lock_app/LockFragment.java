@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -71,6 +72,7 @@ public class LockFragment extends Fragment {
         Master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
             }
         });
     }

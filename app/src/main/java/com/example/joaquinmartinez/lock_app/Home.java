@@ -1,6 +1,7 @@
 package com.example.joaquinmartinez.lock_app;
 
 import android.app.AppOpsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -30,6 +31,9 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         preference = SharePreference.getInstance(this);
         preference.saveData("Timer",true);
+        preference.saveData("Hide",true);
+
+
 
 
         try {

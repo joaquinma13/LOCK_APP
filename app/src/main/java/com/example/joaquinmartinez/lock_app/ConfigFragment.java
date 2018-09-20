@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ConfigFragment extends Fragment implements NotificationAnswer.OnInputSelected{
+public class ConfigFragment extends Fragment {
 
     private SharePreference preference;
     private String nom;
@@ -55,19 +55,6 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ListApp = new ArrayList<>();
         getApps();
-
-        recyclerView.addOnItemTouchListener(new Recycler(getContext(), recyclerView, new Recycler.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                textView = view.findViewById(R.id.NameApp);
-                nom = ((TextView) view.findViewById(R.id.NameApp)).getText().toString();
-                NotificationAnswer notificationAnswer = new NotificationAnswer();
-                notificationAnswer.setTargetFragment(ConfigFragment.this,1);
-                notificationAnswer.show(getFragmentManager(),"Hola");
-            }
-        }));
-
-
     }
 
     void getApps(){
@@ -91,6 +78,7 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
         recyclerView.setAdapter(adapterApp);
     }
 
+    /*
     @Override
     public void sendInput(boolean input) {
         if (input){
@@ -108,4 +96,5 @@ public class ConfigFragment extends Fragment implements NotificationAnswer.OnInp
         }
 
     }
+    */
 }

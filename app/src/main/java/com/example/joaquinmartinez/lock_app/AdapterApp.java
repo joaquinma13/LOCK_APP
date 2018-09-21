@@ -50,8 +50,14 @@ public class AdapterApp extends RecyclerView.Adapter<AdapterApp.ViewHolderData> 
         holder.SwOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-
+                if (b && !preference.getStrData("List_Lock").contains(item.getName())) {
+                    preference.saveData("List_Lock",preference.getStrData("List_Lock")+"~"+item.getName());
+                    System.out.println(preference.getStrData("List_Lock"));
+                }
+                else if(b == false){
+                    String aux = preference.getStrData("List_Lock").replace("~"+item.getName(),"");
+                    preference.saveData("List_Lock",aux);
+                    System.out.println(preference.getStrData("List_Lock"));
                 }
             }
         });
@@ -76,15 +82,6 @@ public class AdapterApp extends RecyclerView.Adapter<AdapterApp.ViewHolderData> 
 
     public static class App {
         private String name;
-        private boolean Flag;
-
-        public boolean isFlag() {
-            return Flag;
-        }
-
-        public void setFlag(boolean flag) {
-            Flag = flag;
-        }
 
         public String getName() {
             return name;

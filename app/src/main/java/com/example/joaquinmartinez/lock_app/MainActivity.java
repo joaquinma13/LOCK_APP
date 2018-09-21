@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements NotificationPassword.NoticeDialogListener{
+public class   MainActivity extends AppCompatActivity implements NotificationPassword.NoticeDialogListener{
     ImageView config;
     ImageView out;
     ImageView back;

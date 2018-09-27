@@ -28,7 +28,7 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.home_layout);
         preference = SharePreference.getInstance(this);
         preference.saveData("Timer",true);
         preference.saveData("Hide",true);
@@ -44,7 +44,7 @@ public class Home extends AppCompatActivity {
         }catch (PackageManager.NameNotFoundException e) {}
 
         if (mode != 0){
-            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS );
             startActivity(intent);
             Toast.makeText(this, "Se necesitan Permisos!!!", Toast.LENGTH_SHORT).show();
         }

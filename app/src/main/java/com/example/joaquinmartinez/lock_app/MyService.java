@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -39,7 +40,7 @@ public class MyService extends Service {
 
     private void startService()
     {
-        timer.scheduleAtFixedRate(new mainTask(), 0, 500);
+        timer.scheduleAtFixedRate(new mainTask(), 0, 100);
     }
 
     private class mainTask extends TimerTask
@@ -78,21 +79,20 @@ public class MyService extends Service {
                     }
                     if (mySortedMap != null && !mySortedMap.isEmpty()) {
                         topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-
                         for (int j = 0; j < apps.length; j++) {
-                            if (topPackageName.contains(apps[j].toLowerCase())) {
-                                System.out.println("APP_B: " + apps[j].toLowerCase() + " TOP: " + topPackageName);
+                            if (topPackageName.equals(apps[j])) {
                                 flag = 1;
                                 break;
                             }
                         }
-
                         if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")|| topPackageName.equals("com.android.vending")) {
 
                         } else if (flag == 1) {
                             flag = 0;
-                        } else {
-                            System.out.println("TOP: " + topPackageName);
+                        }else {
+                            if (topPackageName.contains("com.android.systemui"))
+                                Toast.makeText(getApplication(), "Accion Denegada!!!", Toast.LENGTH_SHORT).show();
+
                             Intent i = new Intent(getApplication(), MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
@@ -102,8 +102,11 @@ public class MyService extends Service {
             }
             }
             else{
-                //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...
+                //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...  "com.android.systemui"
             }
         }
     };
 }
+
+//com.android.chrome
+//com.facebook.katana

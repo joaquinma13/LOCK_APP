@@ -1,8 +1,12 @@
 package com.example.joaquinmartinez.lock_app;
 
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.PowerManager;
+
+import static android.content.Context.POWER_SERVICE;
 
 public class Monitor extends BroadcastReceiver {
     @Override

@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
@@ -14,10 +15,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import java.util.regex.Pattern;
+
+import java.util.List;
 
 public class   MainActivity extends AppCompatActivity implements NotificationPassword.NoticeDialogListener{
     ImageView config;
@@ -31,7 +34,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
     LockFragment lockFragment;
     int flag;
     private SharePreference preference;
-    String[] apps = new String[0];
 
     private NotificationPassword notificationHandler;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -46,7 +48,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
         lockFragment = new LockFragment();
         configFragment = new ConfigFragment();
         preference = SharePreference.getInstance(this);
-        apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
         startService(new Intent(this, MyService.class));
 
         PackageManager p = getPackageManager();
@@ -87,7 +88,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
 
             }
         });
-
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +96,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
 
             }
         });
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +106,8 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
                 back.setVisibility(View.GONE);
             }
         });
+
+
     }
 
 
@@ -159,6 +160,7 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
         }
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+    }
 }

@@ -40,7 +40,7 @@ public class MyService extends Service {
 
     private void startService()
     {
-        timer.scheduleAtFixedRate(new mainTask(), 0, 100);
+        timer.scheduleAtFixedRate(new mainTask(), 0, 200);
     }
 
     private class mainTask extends TimerTask
@@ -85,6 +85,7 @@ public class MyService extends Service {
                                 break;
                             }
                         }
+                        System.out.println();
                         if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")|| topPackageName.equals("com.android.vending")) {
 
                         } else if (flag == 1) {
@@ -94,7 +95,7 @@ public class MyService extends Service {
                                 Toast.makeText(getApplication(), "Accion Denegada!!!", Toast.LENGTH_SHORT).show();
 
                             Intent i = new Intent(getApplication(), MainActivity.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(i);
                         }
                     }
@@ -102,11 +103,8 @@ public class MyService extends Service {
             }
             }
             else{
-                //aqui va la parte donde pongo el metodo para detener verciones abajo de lolipop 5.1...  "com.android.systemui"
+                
             }
         }
     };
 }
-
-//com.android.chrome
-//com.facebook.katana

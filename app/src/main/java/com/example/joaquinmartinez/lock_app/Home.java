@@ -31,7 +31,7 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.home_layout);
         preference = SharePreference.getInstance(this);
         preference.saveData("Timer",true);
-        preference.saveData("Hide",true);
+        preference.saveData("Run",false);
 
 
 

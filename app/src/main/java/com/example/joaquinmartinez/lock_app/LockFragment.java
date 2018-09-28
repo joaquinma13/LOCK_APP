@@ -77,12 +77,6 @@ public class LockFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ListApp = new ArrayList<>();
         getApps();
-        /*
-        Intent i = getPackageManager().getLaunchIntentForPackage("com.mc.miga");
-        startActivity(i);
-        Intent intent = new Intent(getActivity(), mFragmentFavorite.class);
-        startActivity(intent);
-        */
     }
 
 

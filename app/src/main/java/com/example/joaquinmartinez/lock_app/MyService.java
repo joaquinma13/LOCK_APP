@@ -1,74 +1,86 @@
 package com.example.joaquinmartinez.lock_app;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
+
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
-
 import java.util.List;
 import java.util.SortedMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import static android.app.usage.UsageStatsManager.INTERVAL_DAILY;
 
 public class MyService extends Service {
-    private static Timer timer = new Timer();
+
+    MiTareaAsincrona myTask;
     private SharePreference preference;
 
-    public IBinder onBind(Intent arg0)
-    {
+
+    private static final String TAG = "BackgroundSoundService";
+
+    public IBinder onBind(Intent arg0) {
+        Log.i(TAG, "onBind()" );
         return null;
     }
 
-    public void onCreate()
-    {
+    @Override
+    public void onCreate() {
         super.onCreate();
-        startService();
         preference = SharePreference.getInstance(getApplicationContext());
+        myTask = new MiTareaAsincrona();
+        Log.i(TAG, "onCreate() , service started...");
+
+    }
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        myTask.execute();
+        return START_STICKY;
     }
 
-    private void startService()
-    {
-        timer.scheduleAtFixedRate(new mainTask(), 0, 200);
+    @Override
+    public void onDestroy() {
+        myTask.cancel(true);
+        Toast.makeText(this, "Service stopped...", Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "onCreate() , service stopped...");
     }
 
-    private class mainTask extends TimerTask
-    {
-        public void run()
-        {
-            toastHandler.sendEmptyMessage(0);
-        }
+    @Override
+    public void onLowMemory() {
+        Log.i(TAG, "onLowMemory()");
     }
 
-    public void onDestroy()
-    {
-        super.onDestroy();
-    }
 
-    @SuppressLint("HandlerLeak")
-    final Handler toastHandler = new Handler()
-    {
+    class MiTareaAsincrona extends AsyncTask<String, String, String> {
+
+        private boolean cent;
+
         @Override
-        public void handleMessage(Message msg)
-        {
-            String topPackageName;
+        protected String doInBackground(String... params) {
+            while (cent){
+                try {
+                    publishProgress();
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... values) {String topPackageName;
+            String[] apps = new String[0];
+            int flag = 0;
+            apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (preference.getBooData("Timer") == false){}
-                else{
-                    int flag = 0;
-                String[] apps = new String[0];
-                apps = preference.getStrData("List_Lock").split(Pattern.quote("~"));
                 UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
                 long time = System.currentTimeMillis();
                 List<UsageStats> stats = mUsageStatsManager.queryUsageStats(INTERVAL_DAILY, time - 1000 * 10, time);
@@ -86,25 +98,34 @@ public class MyService extends Service {
                             }
                         }
                         System.out.println();
-                        if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")|| topPackageName.equals("com.android.vending")) {
+                        if (topPackageName.contains("home") || topPackageName.contains("launcher") || topPackageName.equals("com.example.joaquinmartinez.lock_app")|| topPackageName.equals("com.android.vending") || topPackageName.contains("com.android.systemui")) {
+                            if (topPackageName.contains("com.android.systemui"))
+                                Toast.makeText(getApplication(), "Accion Denegada!!!", Toast.LENGTH_SHORT).show();
 
                         } else if (flag == 1) {
                             flag = 0;
                         }else {
-                            if (topPackageName.contains("com.android.systemui"))
-                                Toast.makeText(getApplication(), "Accion Denegada!!!", Toast.LENGTH_SHORT).show();
-
                             Intent i = new Intent(getApplication(), MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
                         }
                     }
                 }
             }
-            }
-            else{
-                
-            }
+
         }
-    };
+
+        @Override
+        protected void onPreExecute() {
+            cent = true;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            cent = false;
+        }
+    }
+
 }

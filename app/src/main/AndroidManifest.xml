@@ -30,6 +30,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
+            android:alwaysRetainTaskState="true"
             android:configChanges="screenSize|orientation" />
 
         <receiver android:name=".Monitor">

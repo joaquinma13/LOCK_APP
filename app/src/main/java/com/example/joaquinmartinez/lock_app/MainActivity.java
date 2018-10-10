@@ -27,7 +27,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
     ImageView out;
     ImageView back;
     ImageView enter;
-    int mode;
     String Username;
     String Passsword;
     ConfigFragment configFragment;
@@ -48,34 +47,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
         lockFragment = new LockFragment();
         configFragment = new ConfigFragment();
         preference = SharePreference.getInstance(this);
-
-
-        /*
-
-        startService(new Intent(this, MyService.class));
-
-        PackageManager p = getPackageManager();
-        ComponentName componentName = new ComponentName(MainActivity.this,Home.class ); // launcher activity specified in manifest file as <category android:name="android.intent.category.LAUNCHER" />
-        p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-
-        try {
-            PackageManager packageManager = this.getPackageManager();
-            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) this.getSystemService(Context.APP_OPS_SERVICE);
-            mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
-
-        }catch (PackageManager.NameNotFoundException e) {}
-
-        if (mode != 0){
-            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            startActivity(intent);
-            Toast.makeText(this, "Se necesitan Permisos!!!", Toast.LENGTH_SHORT).show();
-        }
-        else if(mode == 0 ){
-            PackageManager packageManager = getPackageManager();
-            getSupportFragmentManager().beginTransaction().add(R.id.content_frame,lockFragment).commit();
-        }
-        */
 
 
         if (!preference.getBooData("Run")){
@@ -157,7 +128,7 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
             if (Username.equals("MC Collect") && Passsword.equals("12345") ){
                 Toast.makeText(getApplication(), "Servicio Detenido!!!", Toast.LENGTH_SHORT).show();
                 stopService(new Intent(this, MyService.class));
-                preference.saveData("Timer",false);
+                preference.saveData("Run",false);
                 out.setVisibility(View.GONE);
                 enter.setVisibility(View.VISIBLE);
                 PackageManager p = getPackageManager();
@@ -171,7 +142,7 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
                 PackageManager p = getPackageManager();
                 ComponentName componentName = new ComponentName(MainActivity.this,Home.class ); // launcher activity specified in manifest file as <category android:name="android.intent.category.LAUNCHER" />
                 p.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                preference.saveData("Timer",true);
+                preference.saveData("Run",true);
                 out.setVisibility(View.VISIBLE);
                 enter.setVisibility(View.GONE);
             }
@@ -183,4 +154,6 @@ public class   MainActivity extends AppCompatActivity implements NotificationPas
     @Override
     public void onBackPressed() {
     }
+
+
 }

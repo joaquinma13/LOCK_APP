@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.joaquinmartinez.lock_app">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -40,6 +41,17 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".Install"
+            android:enabled="true"
+            android:priority="0">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+
+
         <service android:name=".MyService">
             <intent-filter>
                 <action android:name="com.example.joaquinmartinez.lock_app.MyService"></action>
@@ -50,3 +62,4 @@
     </application>
 
 </manifest>
+

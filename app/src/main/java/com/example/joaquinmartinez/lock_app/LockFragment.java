@@ -86,7 +86,7 @@ public class LockFragment extends Fragment {
         {
             AdapterApp.App app = new AdapterApp.App();
             ApplicationInfo packInfo = packList.get(i);
-            if (((packInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) || packInfo.flags == 952745541 || packInfo.flags == -1463042363) {
+            if (((packInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) || packInfo.packageName.contains("settings")) {
                 String appName = packInfo.loadLabel(getActivity().getPackageManager()).toString();
                 String appPack = packInfo.packageName;
                 Drawable imageView = packInfo.loadIcon(packageManager);
@@ -95,7 +95,6 @@ public class LockFragment extends Fragment {
                     app.setPakete(appPack);
                     app.setImage(imageView);
                     ListApp.add(app);
-
                 }
             }
         }
